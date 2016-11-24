@@ -1,0 +1,94 @@
+
+int main()
+{
+	FILE *fp;		// 평문 파일을 생성하고 이용하기 위한 변수
+	FILE *fpenc;    // 파일을 암호화한 파일을 저장하기 위한 변수
+	FILE *fpg;		// 암호문을 다시 열기 위한 변수
+	FILE *fpdec;	// 복호화한 값을 저장하기 위한 변수
+
+	int i, length=0;
+	int msg_len = 0, block_count = 0;
+	int ans;
+	BYTE p_text[128] = { 0, }; // 평문에 대한 변수
+	BYTE key[Nk * 4 + 1] = { 0, }; // 키에 대한 변수
+	BYTE c_text[128] = { 0, }; // p_text에 있는 값을 암호화
+	BYTE c1_text[128] = { 0, }; // storyenc를 읽어오기 위한 배열
+	BYTE inv_c_text[128] = { 0, };
+
+
+	fp = fopen("C:\\Users\\곽용구\\Desktop\\4조(평문).txt","w+");     // c_text에 있는 값을
+	printf("평문을 입력하세요 : ");
+	gets((char*)p_text);
+	fputs((char*)p_text, fp);							     // stroyenc.txt에 쓰기
+	fclose(fp);												     // fputs(출력할 변수명, 스트림)
+
+	msg_len = (int)strlen((char*)p_text);      // 입력한 평문에 대한 길이
+
+	printf("\n* 평문 : ");
+	for (i = 0; i<msg_len; i++)	
+		printf("%c", p_text[i]);
+	printf("\n");											  
+
+	printf("* 비밀키 입력 : ");
+	scanf("%s", key);
+	getchar();
+
+	if((msg_len % (Nb*4)) > 0)							// 비트가 16의 배수가 아닌경우 빈공간을
+	{													// 0으로 채워준다.
+		block_count = (msg_len / (Nb*4)) + 1;
+		for(i=msg_len; i<block_count*Nb*4; i++)
+		{
+			p_text[i] = '0';
+		}
+	}
+	else
+		block_count = msg_len / (Nb*4);					// 16비트일경우 block_count값 결정
+
+	printf("\n* 보완된 평문 : ");						// 빈공간에 0을 넣어준 평문 값
+	for (i = 0; i<block_count * Nb * 4; i++)  
+		printf("%c", p_text[i]);
+	printf("\n");
+
+	// 암호화
+	for (i = 0; i < block_count; i++)
+		AES_Cipher(&p_text[i * Nb * 4], &c_text[i * Nb * 4], key);
+																	 // w+는 파일이 존재하지 않는경우 생성후 쓰기
+	fpenc = fopen("C:\\Users\\곽용구\\Desktop\\4조enc.txt","w+");     // c_text에 있는 값을
+	fputs((char*)c_text, fpenc);									 // stroyenc에 쓰기
+	fclose(fpenc);												     // fputs(출력할 변수명, 스트림)
+	printf("\n* 암호문 : ");
+	for (i = 0; i<block_count * Nb * 4; i++)
+		printf("%c", c_text[i]);
+	printf("\n");
+
+	printf("복호문 파일을 생성하시겠습니까?(Y=1/N=2) : ");
+	scanf("%d", &ans);
+	if(ans==1)
+	{
+		// 복호화
+		for (i = 0; i < block_count; i++)
+			AES_Inverse_Cipher(&c_text[i * Nb * 4], &inv_c_text[i * Nb * 4], key);	
+
+		if((msg_len % (Nb*4)) > 0)						// 복호화 된 값이 16 배수가 아닌경우 0값이 생기는 것을 NULL값으로 바꿔준다
+		{
+			block_count = (msg_len / (Nb*4)) + 1;
+			for(i=msg_len; i<block_count*Nb*4; i++)		// 복호문은 빈공간을 설정할 필요가 없기 때문에
+			{
+				inv_c_text[i] = '\n';
+			}
+		}	
+																 // w+는 파일이 존재하지 않는경우 생성후 쓰기
+		fpdec = fopen("C:\\Users\\곽용구\\Desktop\\4조dec.txt","w+");     // c_text에 있는 값을
+		fputs((char*)inv_c_text, fpdec);							     // stroyenc.txt에 쓰기
+		fclose(fpdec);												     // fputs(출력할 변수명, 스트림)
+		printf("\n* 복호문 : ");
+		for (i = 0; i<msg_len; i++)	
+			printf("%c", inv_c_text[i]);
+		printf("\n");	
+	}
+	else
+	{
+		printf("복호문 파일이 생성되지 않았습니다.\n");
+		return 0;
+	}
+}
