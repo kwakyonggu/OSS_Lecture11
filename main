@@ -1,9 +1,9 @@
 
 int main()
 {
-	FILE *fp;		// 평문 파일을 생성하고 이용하기 위한 변수
+	FILE *fp;	// 평문 파일을 생성하고 이용하기 위한 변수
 	FILE *fpenc;    // 파일을 암호화한 파일을 저장하기 위한 변수
-	FILE *fpg;		// 암호문을 다시 열기 위한 변수
+	FILE *fpg;	// 암호문을 다시 열기 위한 변수
 	FILE *fpdec;	// 복호화한 값을 저장하기 위한 변수
 
 	int i, length=0;
@@ -19,8 +19,8 @@ int main()
 	fp = fopen("C:\\Users\\곽용구\\Desktop\\4조(평문).txt","w+");     // c_text에 있는 값을
 	printf("평문을 입력하세요 : ");
 	gets((char*)p_text);
-	fputs((char*)p_text, fp);							     // stroyenc.txt에 쓰기
-	fclose(fp);												     // fputs(출력할 변수명, 스트림)
+	fputs((char*)p_text, fp);					 // stroyenc.txt에 쓰기
+	fclose(fp);							// fputs(출력할 변수명, 스트림)
 
 	msg_len = (int)strlen((char*)p_text);      // 입력한 평문에 대한 길이
 
@@ -33,8 +33,8 @@ int main()
 	scanf("%s", key);
 	getchar();
 
-	if((msg_len % (Nb*4)) > 0)							// 비트가 16의 배수가 아닌경우 빈공간을
-	{													// 0으로 채워준다.
+	if((msg_len % (Nb*4)) > 0)				// 비트가 16의 배수가 아닌경우 빈공간을
+	{								// 0으로 채워준다.
 		block_count = (msg_len / (Nb*4)) + 1;
 		for(i=msg_len; i<block_count*Nb*4; i++)
 		{
@@ -42,9 +42,9 @@ int main()
 		}
 	}
 	else
-		block_count = msg_len / (Nb*4);					// 16비트일경우 block_count값 결정
+		block_count = msg_len / (Nb*4);			// 16비트일경우 block_count값 결정
 
-	printf("\n* 보완된 평문 : ");						// 빈공간에 0을 넣어준 평문 값
+	printf("\n* 보완된 평문 : ");			// 빈공간에 0을 넣어준 평문 값
 	for (i = 0; i<block_count * Nb * 4; i++)  
 		printf("%c", p_text[i]);
 	printf("\n");
@@ -54,8 +54,8 @@ int main()
 		AES_Cipher(&p_text[i * Nb * 4], &c_text[i * Nb * 4], key);
 																	 // w+는 파일이 존재하지 않는경우 생성후 쓰기
 	fpenc = fopen("C:\\Users\\곽용구\\Desktop\\4조enc.txt","w+");     // c_text에 있는 값을
-	fputs((char*)c_text, fpenc);									 // stroyenc에 쓰기
-	fclose(fpenc);												     // fputs(출력할 변수명, 스트림)
+	fputs((char*)c_text, fpenc);					 // 4enc에 쓰기
+	fclose(fpenc);						// fputs(출력할 변수명, 스트림)
 	printf("\n* 암호문 : ");
 	for (i = 0; i<block_count * Nb * 4; i++)
 		printf("%c", c_text[i]);
