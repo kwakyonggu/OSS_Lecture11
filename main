@@ -19,7 +19,7 @@ int main()
 	fp = fopen("C:\\Users\\곽용구\\Desktop\\4조(평문).txt","w+");     // c_text에 있는 값을
 	printf("평문을 입력하세요 : ");
 	gets((char*)p_text);
-	fputs((char*)p_text, fp);					 // stroyenc.txt에 쓰기
+	fputs((char*)p_text, fp);					 // 4enc.txt에 쓰기
 	fclose(fp);							// fputs(출력할 변수명, 스트림)
 
 	msg_len = (int)strlen((char*)p_text);      // 입력한 평문에 대한 길이
