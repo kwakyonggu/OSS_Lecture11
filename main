@@ -69,7 +69,7 @@ int main()
 		for (i = 0; i < block_count; i++)
 			AES_Inverse_Cipher(&c_text[i * Nb * 4], &inv_c_text[i * Nb * 4], key);	
 
-		if((msg_len % (Nb*4)) > 0)						// 복호화 된 값이 16 배수가 아닌경우 0값이 생기는 것을 NULL값으로 바꿔준다
+		if((msg_len % (Nb*4)) > 0)			// 복호화 된 값이 16 배수가 아닌경우 0값이 생기는 것을 NULL값으로 바꿔준다
 		{
 			block_count = (msg_len / (Nb*4)) + 1;
 			for(i=msg_len; i<block_count*Nb*4; i++)		// 복호문은 빈공간을 설정할 필요가 없기 때문에
@@ -77,10 +77,10 @@ int main()
 				inv_c_text[i] = '\n';
 			}
 		}	
-																 // w+는 파일이 존재하지 않는경우 생성후 쓰기
+										 // w+는 파일이 존재하지 않는경우 생성후 쓰기
 		fpdec = fopen("C:\\Users\\곽용구\\Desktop\\4조dec.txt","w+");     // c_text에 있는 값을
-		fputs((char*)inv_c_text, fpdec);							     // stroyenc.txt에 쓰기
-		fclose(fpdec);												     // fputs(출력할 변수명, 스트림)
+		fputs((char*)inv_c_text, fpdec);				   // 4dec.txt에 쓰기
+		fclose(fpdec);							 // fputs(출력할 변수명, 스트림)
 		printf("\n* 복호문 : ");
 		for (i = 0; i<msg_len; i++)	
 			printf("%c", inv_c_text[i]);
