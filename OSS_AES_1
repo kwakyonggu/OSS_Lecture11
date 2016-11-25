@@ -109,7 +109,7 @@ int main()
 	BYTE inv_c_text[128] = { 0, };
 
 
-	fp = fopen("C:\\Users\\곽용구\\Desktop\\4조(평문).txt","w+");     // c_text에 있는 값을
+	fp = fopen("C:\\Users\\system\\Desktop\\4조(평문).txt","w+");     // c_text에 있는 값을
 	printf("평문을 입력하세요 : ");
 	gets((char*)p_text);
 	fputs((char*)p_text, fp);							     // 4조(평문)enc.txt에 쓰기
@@ -146,7 +146,7 @@ int main()
 	for (i = 0; i < block_count; i++)
 		AES_Cipher(&p_text[i * Nb * 4], &c_text[i * Nb * 4], key);
 												// w+는 파일이 존재하지 않는경우 생성후 쓰기
-	fpenc = fopen("C:\\Users\\곽용구\\Desktop\\4조enc.txt","w+");     // c_text에 있는 값을
+	fpenc = fopen("C:\\Users\\system\\Desktop\\4조enc.txt","w+");     // c_text에 있는 값을
 	fputs((char*)c_text, fpenc);					// 4조(평문)enc에 쓰기
 	fclose(fpenc);							// fputs(출력할 변수명, 스트림)
 	printf("\n* 암호문 : ");
@@ -171,7 +171,7 @@ int main()
 			}
 		}	
 													// w+는 파일이 존재하지 않는경우 생성후 쓰기
-		fpdec = fopen("C:\\Users\\곽용구\\Desktop\\4조dec.txt","w+");     // c_text에 있는 값을
+		fpdec = fopen("C:\\Users\\system\\Desktop\\4조dec.txt","w+");     // c_text에 있는 값을
 		fputs((char*)inv_c_text, fpdec);							// 4조(평문)dec.txt에 쓰기
 		fclose(fpdec);										// fputs(출력할 변수명, 스트림)
 		printf("\n* 복호문 : ");
