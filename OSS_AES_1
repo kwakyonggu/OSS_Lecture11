@@ -147,7 +147,7 @@ int main()
 		AES_Cipher(&p_text[i * Nb * 4], &c_text[i * Nb * 4], key);
 												// w+는 파일이 존재하지 않는경우 생성후 쓰기
 	fpenc = fopen("C:\\Users\\system\\Desktop\\4조enc.txt","w+");     // c_text에 있는 값을
-	fputs((char*)c_text, fpenc);					// 4조(평문)enc에 쓰기
+	fputs((char*)c_text, fpenc);					 // 4조(평문)enc에 쓰기
 	fclose(fpenc);							// fputs(출력할 변수명, 스트림)
 	printf("\n* 암호문 : ");
 	for (i = 0; i<block_count * Nb * 4; i++)
