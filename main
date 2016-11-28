@@ -218,3 +218,18 @@ void KeyExpansion(BYTE* key, WORD* W)   // 키 확장
 	}
 }
 
+// SubWord
+WORD SubWord(WORD W) // 키 확장을 위한 SubWord함수
+{
+	int i;
+	WORD out = 0, mask = 0xFF000000;
+	BYTE shift = 24;
+ 
+	for (i = 0; i<4; i++)
+	{
+		out += (WORD)S_box[HIHEX((W & mask) >> shift)][LOWHEX((W & mask) >> shift)] << shift;
+		mask >>= 8;
+		shift -= 8;
+	}
+	return out;
+}
