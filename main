@@ -91,4 +91,103 @@ int main()
 		printf("복호문 파일이 생성되지 않았습니다.\n");
 		return 0;
 	}
+	
+	void AES_Cipher(BYTE* in, BYTE* out, BYTE* key) // 암호화 함수
+{
+	int i, j;
+	BYTE state[4][4];
+	WORD* W;
+
+	if (Nk == 4)
+	{
+		Nr = 10;
+		W = (WORD*)malloc(sizeof(WORD)*Nb*(Nr + 1));
+	}
+
+	if (Nk == 6)
+	{
+		Nr = 12;
+		W = (WORD*)malloc(sizeof(WORD)*Nb*(Nr + 1));
+	}
+ 
+	if (Nk == 8)
+	{
+		Nr = 14;
+		W = (WORD*)malloc(sizeof(WORD)*Nb*(Nr + 1));
+	}
+
+	for (i = 0; i<4; i++)
+		for (j = 0; j<4; j++)
+			state[j][i] = in[i * 4 + j];
+
+	KeyExpansion(key, W);	
+	AddRoundKey(state, W);
+
+	for (i = 0; i<Nr - 1; i++)
+	{
+		SubBytes(state);
+		ShiftRows(state);
+		MixColumns(state);
+		AddRoundKey(state, &W[(i + 1) * 4]);
+	}
+
+	SubBytes(state);
+	ShiftRows(state);
+	AddRoundKey(state, &W[(i + 1) * 4]);
+ 
+	for (i = 0; i<4; i++)
+		for (j = 0; j<4; j++)
+			out[i * 4 + j] = state[j][i];
+	free(W);
+}
+
+void AES_Inverse_Cipher(BYTE* in, BYTE* out, BYTE* key) // 복호화 함수
+{
+	int i, j;
+	BYTE state[4][4];
+	WORD* W;
+
+	if (Nk == 4)
+	{
+		Nr = 10;
+		W = (WORD*)malloc(sizeof(WORD)*Nb*(Nr + 1));
+	}
+ 
+	if (Nk == 6)
+	{
+		Nr = 12;
+		W = (WORD*)malloc(sizeof(WORD)*Nb*(Nr + 1));
+	}
+
+	if (Nk == 8)
+	{
+		Nr = 14;
+		W = (WORD*)malloc(sizeof(WORD)*Nb*(Nr + 1));
+	}
+ 
+	for (i = 0; i<4; i++)
+		for (j = 0; j<4; j++)
+			state[j][i] = in[i * 4 + j];
+ 
+	KeyExpansion(key, W);				
+	AddRoundKey(state, &W[Nr*Nb]);										
+
+	for (i = 0; i<Nr - 1; i++)
+	{
+		Inv_ShiftRows(state);
+		Inv_SubBytes(state);
+		AddRoundKey(state, &W[(Nr - i - 1)*Nb]);
+		Inv_MixColumns(state);
+	}
+ 
+	Inv_ShiftRows(state);
+	Inv_SubBytes(state);
+	AddRoundKey(state, &W[(Nr - i - 1)*Nb]);
+
+	for (i = 0; i<4; i++)
+		for (j = 0; j<4; j++)
+			out[i * 4 + j] = state[j][i];
+	free(W);	
+	}
+
 }
