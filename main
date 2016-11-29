@@ -298,3 +298,23 @@ void AddRoundKey(BYTE state[][4], WORD* rKey) // 키생성 함수
 		}
 	}
 }
+
+// Invers SubBytes
+void Inv_SubBytes(BYTE state[][4]) // 복호화를위한 라운드에 포함된 함수
+{
+	int i, j;
+
+	for (i = 0; i<4; i++)
+		for (j = 0; j<4; j++)
+			state[i][j] = Inv_S_box[HIHEX(state[i][j])][LOWHEX(state[i][j])];
+}
+
+// Invers ShiftRows
+void Inv_ShiftRows(BYTE state[][4]) // 복호화를위한 라운드에 포함된 함수
+{
+	int i, j;
+
+	for (i = 1; i<4; i++)
+		for (j = 0; j<i; j++)
+			Inv_CirShiftRows(state[i]);
+}
