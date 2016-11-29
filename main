@@ -278,3 +278,23 @@ void MixColumns(BYTE state[][4]) // 암호화를위한 라운드에 포함된 �
 	for (i = 0; i<4; i++)
 		for (j = 0; j<4; j++) state[i][j] = b[i][j];
 }
+
+// AddRoundKey
+void AddRoundKey(BYTE state[][4], WORD* rKey) // 키생성 함수
+{
+	int i, j;
+	WORD mask, shift;
+
+	for (i = 0; i<4; i++)
+	{
+		shift = 24;
+		mask = 0xFF000000;
+
+		for (j = 0; j<4; j++)
+		{
+			state[j][i] = ((rKey[i] & mask) >> shift) ^ state[j][i];
+			mask >>= 8;
+			shift -= 8;
+		}
+	}
+}
