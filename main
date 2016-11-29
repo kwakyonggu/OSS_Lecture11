@@ -318,3 +318,147 @@ void Inv_ShiftRows(BYTE state[][4]) // 복호화를위한 라운드에 포함된
 		for (j = 0; j<i; j++)
 			Inv_CirShiftRows(state[i]);
 }
+
+// Invers MixColumns
+void Inv_MixColumns(BYTE state[][4]) // 복호화를위한 라운드에 포함된 함수
+{
+	int i, j, k;
+	BYTE a[4][4] = { 0x0E, 0x0B, 0x0D, 0x09,		// a^-1(x) = 0bx^3 + 0dx^2 + 09x + 0e
+		0x09, 0x0E, 0x0B, 0x0D,
+		0x0D, 0x09, 0x0E, 0x0B,
+		0x0B, 0x0D, 0x09, 0x0E };
+	BYTE b[4][4] = { 0, };
+
+	for (i = 0; i<4; i++)
+	{
+		for (j = 0; j<4; j++)
+			for (k = 0; k<4; k++)
+				b[i][j] ^= x_time_1(a[i][k], state[k][j]);
+	}
+
+	for (i = 0; i<4; i++)
+		for (j = 0; j<4; j++) state[i][j] = b[i][j];
+}
+
+void CirShiftRows(BYTE* row)
+{
+	BYTE temp = row[0];
+
+	row[0] = row[1];
+	row[1] = row[2];
+	row[2] = row[3];
+	row[3] = temp;
+}
+
+void Inv_CirShiftRows(BYTE* row)
+{
+	BYTE temp = row[3];
+
+	row[3] = row[2];
+	row[2] = row[1];
+	row[1] = row[0];
+	row[0] = temp;
+}
+
+BYTE x_time(BYTE b, BYTE n)
+{
+	int i;
+	BYTE temp = 0, mask = 0x01;
+ 
+	for (i = 0; i<8; i++)
+	{
+		if (n & mask)
+			temp ^= b;
+
+		if (b & 0x80)
+			b = (b << 1) ^ 0x1B;
+
+		else
+			b <<= 1;
+
+		mask <<= 1;
+	}
+	return temp;
+}
+
+BYTE x_time_1(BYTE n, BYTE b)
+// Invers MixColumns
+void Inv_MixColumns(BYTE state[][4]) // 복호화를위한 라운드에 포함된 함수
+{
+	int i, j, k;
+	BYTE a[4][4] = { 0x0E, 0x0B, 0x0D, 0x09,		// a^-1(x) = 0bx^3 + 0dx^2 + 09x + 0e
+		0x09, 0x0E, 0x0B, 0x0D,
+		0x0D, 0x09, 0x0E, 0x0B,
+		0x0B, 0x0D, 0x09, 0x0E };
+	BYTE b[4][4] = { 0, };
+
+	for (i = 0; i<4; i++)
+	{
+		for (j = 0; j<4; j++)
+			for (k = 0; k<4; k++)
+				b[i][j] ^= x_time_1(a[i][k], state[k][j]);
+	}
+
+	for (i = 0; i<4; i++)
+		for (j = 0; j<4; j++) state[i][j] = b[i][j];
+}
+
+void CirShiftRows(BYTE* row)
+{
+	BYTE temp = row[0];
+
+	row[0] = row[1];
+	row[1] = row[2];
+	row[2] = row[3];
+	row[3] = temp;
+}
+
+void Inv_CirShiftRows(BYTE* row)
+{
+	BYTE temp = row[3];
+
+	row[3] = row[2];
+	row[2] = row[1];
+	row[1] = row[0];
+	row[0] = temp;
+}
+
+BYTE x_time(BYTE b, BYTE n)
+{
+	int i;
+	BYTE temp = 0, mask = 0x01;
+ 
+	for (i = 0; i<8; i++)
+	{
+		if (n & mask)
+			temp ^= b;
+
+		if (b & 0x80)
+			b = (b << 1) ^ 0x1B;
+
+		else
+			b <<= 1;
+
+		mask <<= 1;
+	}
+	return temp;
+}
+
+BYTE x_time_1(BYTE n, BYTE b)
+{
+	int i;
+	BYTE temp = 0, mask = 0x01;
+
+	for (i = 0; i<8; i++)
+	{
+		if (n & mask)
+			temp ^= b;
+		if (b & 0x80)
+			b = (b << 1) ^ 0x1B;
+		else
+			b <<= 1;
+		
+		mask <<= 1;
+	}
+	return temp;
+}
