@@ -1,464 +1,252 @@
-﻿
+#include <Windows.h>
+#include "graphics.h"
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+typedef struct info{
+	char name[10];   //이름
+	int std_no[10];   //학번
+	int class_no[10];   //과목수
+	char std_class[20][10];   //과목이름
+	double score[20];   //점수
+	double avg[20];  //평균
+	int rank[20];  //순위
+}No1;
+void first();
+void test1(int n); //graphics사용 그림함수
+
 int main()
 {
-	FILE *fp;		// 평문 파일을 생성하고 이용하기 위한 변수
-	FILE *fpenc;    // 파일을 암호화한 파일을 저장하기 위한 변수
-	FILE *fpg;		// 암호문을 다시 열기 위한 변수
-	FILE *fpdec;	// 복호화한 값을 저장하기 위한 변수
+	
+	first();
+	return 0;
+}
+void first()
+{
+	
+	char name[20],txt[10]=".txt";;
+	char a[500],b[500]="이름",c[100]="학번",d[100]="갯수",e[100]="과목",f[100]="점수",g[100]="평균",h[100]="성별",m[10]="남",w[10]="여";
+	int i=0,j,count=0,z=0;
+	No1 no1[500];
+	FILE *fp;
+	char filename[100];
+	printf("조회하고자 하는 성적의 년도와 학기를 적어주세요\n ex)2016년2학기ㅡ>162\n");
+	gets(filename);
+	strcat(filename,txt);             //.txt를 입력하기 귀찮아서 아예 내장//
+	fp=fopen(filename,"r");
+	if(fp==NULL)
+	{
+		printf("파일 열기 에러\n");
+		exit(1);
+	}
 
-	int i, length=0;
-	int msg_len = 0, block_count = 0;
-	int ans;
-	BYTE p_text[128] = { 0, }; // 평문에 대한 변수
-	BYTE key[Nk * 4 + 1] = { 0, }; // 키에 대한 변수
-	BYTE c_text[128] = { 0, }; // p_text에 있는 값을 암호화
-	BYTE c1_text[128] = { 0, }; // storyenc를 읽어오기 위한 배열
-	BYTE inv_c_text[128] = { 0, };
-
-
-	fp = fopen("C:\\Users\\곽용구\\Desktop\\4조(평문).txt","w+");     // c_text에 있는 값을
-	printf("평문을 입력하세요 : ");
-	gets((char*)p_text);
-	fputs((char*)p_text, fp);							     // 4조(평문)enc.txt에 쓰기
-	fclose(fp);												     // fputs(출력할 변수명, 스트림)
-
-	msg_len = (int)strlen((char*)p_text);      // 입력한 평문에 대한 길이
-
-	printf("\n* 평문 : ");
-	for (i = 0; i<msg_len; i++)	
-		printf("%c", p_text[i]);
-	printf("\n");											  
-
-	printf("* 비밀키 입력 : ");
-	scanf("%s", key);
-	getchar();
-
-	if((msg_len % (Nb*4)) > 0)							// 비트가 16의 배수가 아닌경우 빈공간을
-	{													// 0으로 채워준다.
-		block_count = (msg_len / (Nb*4)) + 1;
-		for(i=msg_len; i<block_count*Nb*4; i++)
+	while(!feof(fp))
+	{
+		fscanf(fp, "%s", &a);
+		if(strcmp(a,b)==0)             //반복문 횟수 구하기 위한 count// 
 		{
-			p_text[i] = '0';
+			count++;
 		}
 	}
-	else
-		block_count = msg_len / (Nb*4);					// 16비트일경우 block_count값 결정
-
-	printf("\n* 보완된 평문 : ");						// 빈공간에 0을 넣어준 평문 값
-	for (i = 0; i<block_count * Nb * 4; i++)  
-		printf("%c", p_text[i]);
-	printf("\n");
-
-	// 암호화
-	for (i = 0; i < block_count; i++)
-		AES_Cipher(&p_text[i * Nb * 4], &c_text[i * Nb * 4], key);
-												// w+는 파일이 존재하지 않는경우 생성후 쓰기
-	fpenc = fopen("C:\\Users\\곽용구\\Desktop\\4조enc.txt","w+");     // c_text에 있는 값을
-	fputs((char*)c_text, fpenc);					// 4조(평문)enc에 쓰기
-	fclose(fpenc);							// fputs(출력할 변수명, 스트림)
-	printf("\n* 암호문 : ");
-	for (i = 0; i<block_count * Nb * 4; i++)
-		printf("%c", c_text[i]);
-	printf("\n");
-
-	printf("복호문 파일을 생성하시겠습니까?(Y=1/N=2) : ");
-	scanf("%d", &ans);
-	if(ans==1)
-	{
-		// 복호화
-		for (i = 0; i < block_count; i++)
-			AES_Inverse_Cipher(&c_text[i * Nb * 4], &inv_c_text[i * Nb * 4], key);	
-
-		if((msg_len % (Nb*4)) > 0)						// 복호화 된 값이 16 배수가 아닌경우 0값이 생기는 것을 NULL값으로 바꿔준다
+	fseek(fp, 0, SEEK_SET);            //파일 위치 초기화//
+		while(!feof(fp))
 		{
-			block_count = (msg_len / (Nb*4)) + 1;
-			for(i=msg_len; i<block_count*Nb*4; i++)		// 복호문은 빈공간을 설정할 필요가 없기 때문에
+		fscanf(fp, "%s", &a);          //파일에 블럭단위 값을 a에 입력//
+			if(strcmp(a,b)==0)         //a값이 "이름"이면 그다음 값을 이름 구조체에 입력//
 			{
-				inv_c_text[i] = '\n';
+				fseek(fp, 0, SEEK_CUR);
+				fscanf(fp, "%s", no1[i].name);        
+				i++;
 			}
-		}	
-													// w+는 파일이 존재하지 않는경우 생성후 쓰기
-		fpdec = fopen("C:\\Users\\곽용구\\Desktop\\4조dec.txt","w+");     // c_text에 있는 값을
-		fputs((char*)inv_c_text, fpdec);							// 4조(평문)dec.txt에 쓰기
-		fclose(fpdec);										// fputs(출력할 변수명, 스트림)
-		printf("\n* 복호문 : ");
-		for (i = 0; i<msg_len; i++)	
-			printf("%c", inv_c_text[i]);
-		printf("\n");	
-	}
-	else
+		}
+		
+
+	fseek(fp, 0, SEEK_SET);
+	i=0;
+		while(!feof(fp))
+		{
+		fscanf(fp, "%s", &a);
+			if(strcmp(a,c)==0) 
+			{
+				fseek(fp, 0, SEEK_CUR);
+				fscanf(fp, "%d", no1[i].std_no);
+				i++;
+			}
+		}
+		
+	fseek(fp, 0, SEEK_SET);
+	i=0;
+		while(!feof(fp))
+		{
+		fscanf(fp, "%s", &a);
+			if(strcmp(a,d)==0) 
+			{
+				fseek(fp, 0, SEEK_CUR);
+				fscanf(fp, "%d", no1[i].class_no);
+				i++;
+			}
+		}
+	
+	fseek(fp, 0, SEEK_SET);
+	i=0;
+		while(!feof(fp))
+		{
+			fscanf(fp, "%s", &a);
+				if(strcmp(a,e)==0) 
+				{
+					fseek(fp, 0, SEEK_CUR);
+						for(j=0;j<count;j++)
+						{
+							fscanf(fp, "%s", no1[i].std_class[j]);
+						}
+						i++;
+				}
+		}
+		
+		fseek(fp, 0, SEEK_SET);
+		i=0;
+		while(!feof(fp))
+		{
+		fscanf(fp, "%s", &a);
+			if(strcmp(a,f)==0) 
+			{
+			fseek(fp, 0, SEEK_CUR);
+			for(j=0;j<count;j++)
+			{
+			fscanf(fp, "%lf", &no1[i].score[j]);
+			}
+			i++;
+			}
+		}
+	fseek(fp, 0, SEEK_SET);
+	i=0;
+		while(!feof(fp))
+		{
+		fscanf(fp, "%s", &a);
+			if(strcmp(a,g)==0) 
+			{
+			fseek(fp, 0, SEEK_CUR);
+			fscanf(fp, "%lf", no1[i].avg);
+			i++;
+			}
+		}
+	printf("%d",no1[0].class_no);	
+	for(i=0;i<count;i++)
 	{
-		printf("복호문 파일이 생성되지 않았습니다.\n");
-		return 0;
+		no1[i].rank[0]=1;
+	}
+	for(i=0;i<count;i++)
+		for(j=0;j<count;j++)
+	{
+		if(no1[i].avg[0]<no1[j].avg[0])
+			no1[i].rank[0]++;
+	}
+		
+	printf("찾고자 하는 학생의 이름을 입력\n");
+	gets(name);
+	for(i=0;i<count;i++)
+	{
+		if(strcmp(no1[i].name,name)==0)
+		{
+			if(no1[i].avg[0]>=2.5||no1[i].rank[0]==1||no1[i].rank[0]==2)
+				z=1;
+			else 
+				z=2;
+			test1(z);     //그림 삽입
+			printf("\n\n\n  이름 : %s\n\n  학번 : %d\n\n",no1[i].name,no1[i].std_no[0]);
+			printf("  과목 : ");
+			int sec=*no1[i].class_no;
+		for(j=0;j<sec;j++)
+				printf("%s ",no1[i].std_class[j]);
+		printf("\n\n  점수 : ");
+		for(j=0;j<sec;j++)
+				printf("%.1lf  ", no1[i].score[j]);
+		
+		printf("\n\n");
+		printf("  평균 : %.1lf\n\n", no1[i].avg[0]);
+		printf("  순위 : 총인원 %d명 중 %d등\n\n",count, no1[i].rank[0]);
+		printf("  수혜가능한 장학금 목록\n");
+			if(no1[i].avg[0]>2.5&&no1[i].rank[0]==1)
+				printf("  수석장학금 -> 등록금의 70 감면\n  국가장학금 -> 소득분위별 지급액 다름");
+			else if(no1[i].avg[0]>2.5&&no1[i].rank[0]==2)
+				printf("  차석장학금 -> 등록금의 50 감면\n  국가장학금 -> 소득분위별 지급액 다름");
+			else if(no1[i].avg[0]>2.5)
+				printf("  국가장학금 -> 소득분위별 지급액 다름");
+			else
+				printf("  받을 수 있는 장학금이없습니다");
+		}
+	}
+
+	printf("\n\n\n\n\n\n\n");
+	fclose(fp);
+	
+}
+
+
+void test1(int n)
+{
+
+	int i;
+	initgraph();
+	setcolor(13);
+	line(20,50,700,50);         //큰사각형//
+	line(20,500,700,500);
+	line(700,50,700,500);
+
+	setcolor(3);
+	for(i=90;i<320;i++)         //시험지//
+		line(800,i,1100,i);
+	
+	
+	setcolor(13);
+	for(i=490;i<650;i++)
+	{
+	line(i,70,i,300);
+	}
+if(n==1)                          //평균2.5이상 일때//
+	{
+	setcolor(2);                //웃는사진//
+	for(i=520;i<620;i++)
+		line(570,170,i,270); 
+	setcolor(15);
+	circle(570,150,80);        //사진속 동그라미//
+	setcolor(0);                    
+	for(i=550;i<591;i++)       //머리카락//
+		line(570,126,i,110);
+	setcolor(1);
+	line(557,145,547,140);     //눈//
+	line(547,140,537,145);
+	line(602,145,592,140);     //눈//
+	line(592,140,582,145);
+	line(557,160,570,165);     //입//
+	line(570,165,583,160);
+	setcolor(15);
+	for(i=110;i<290;i++)
+		line(805,i,820,i);
+	circle(900,200,120);
+	circle(1030,200,120);
+}
+	if(n==2)                  //평균 2.5미만일때//
+	{
+	setcolor(3);               //우는사진//
+	for(i=520;i<620;i++)
+		line(570,170,i,270);
+	setcolor(10);
+	circle(570,150,80);        //사진속 동그라미//
+	setcolor(0);                    
+	for(i=530;i<611;i++)
+	line(570,105,i,126);       //윗머리//
+	for(i=520;i<534;i++)
+	line(533,130,i,170);	   //왼쪽  긴머리//
+	for(i=605;i<619;i++)
+	line(605,130,i,170);       //오른쪽 긴머리//
+	setcolor(1);
+	line(547,140,557,140);     //눈//
+	line(577,140,587,140);
+	line(557,165,570,160);	   //입//
+	line(570,160,583,165);
+	setcolor(15);
+	circle(950,200,180);
 	}
 	
-	void AES_Cipher(BYTE* in, BYTE* out, BYTE* key) // 암호화 함수
-{
-	int i, j;
-	BYTE state[4][4];
-	WORD* W;
-
-	if (Nk == 4)
-	{
-		Nr = 10;
-		W = (WORD*)malloc(sizeof(WORD)*Nb*(Nr + 1));
-	}
-
-	if (Nk == 6)
-	{
-		Nr = 12;
-		W = (WORD*)malloc(sizeof(WORD)*Nb*(Nr + 1));
-	}
- 
-	if (Nk == 8)
-	{
-		Nr = 14;
-		W = (WORD*)malloc(sizeof(WORD)*Nb*(Nr + 1));
-	}
-
-	for (i = 0; i<4; i++)
-		for (j = 0; j<4; j++)
-			state[j][i] = in[i * 4 + j];
-
-	KeyExpansion(key, W);	
-	AddRoundKey(state, W);
-
-	for (i = 0; i<Nr - 1; i++)
-	{
-		SubBytes(state);
-		ShiftRows(state);
-		MixColumns(state);
-		AddRoundKey(state, &W[(i + 1) * 4]);
-	}
-
-	SubBytes(state);
-	ShiftRows(state);
-	AddRoundKey(state, &W[(i + 1) * 4]);
- 
-	for (i = 0; i<4; i++)
-		for (j = 0; j<4; j++)
-			out[i * 4 + j] = state[j][i];
-	free(W);
-}
-
-void AES_Inverse_Cipher(BYTE* in, BYTE* out, BYTE* key) // 복호화 함수
-{
-	int i, j;
-	BYTE state[4][4];
-	WORD* W;
-
-	if (Nk == 4)
-	{
-		Nr = 10;
-		W = (WORD*)malloc(sizeof(WORD)*Nb*(Nr + 1));
-	}
- 
-	if (Nk == 6)
-	{
-		Nr = 12;
-		W = (WORD*)malloc(sizeof(WORD)*Nb*(Nr + 1));
-	}
-
-	if (Nk == 8)
-	{
-		Nr = 14;
-		W = (WORD*)malloc(sizeof(WORD)*Nb*(Nr + 1));
-	}
- 
-	for (i = 0; i<4; i++)
-		for (j = 0; j<4; j++)
-			state[j][i] = in[i * 4 + j];
- 
-	KeyExpansion(key, W);				
-	AddRoundKey(state, &W[Nr*Nb]);										
-
-	for (i = 0; i<Nr - 1; i++)
-	{
-		Inv_ShiftRows(state);
-		Inv_SubBytes(state);
-		AddRoundKey(state, &W[(Nr - i - 1)*Nb]);
-		Inv_MixColumns(state);
-	}
- 
-	Inv_ShiftRows(state);
-	Inv_SubBytes(state);
-	AddRoundKey(state, &W[(Nr - i - 1)*Nb]);
-
-	for (i = 0; i<4; i++)
-		for (j = 0; j<4; j++)
-			out[i * 4 + j] = state[j][i];
-	free(W);	
-	}
-
-}
-
-void KeyExpansion(BYTE* key, WORD* W)   // 키 확장
-{
-	WORD temp;
-	int i = 0;
-
-	while (i < Nk)
-	{
-		W[i] = BTOW(key[4 * i], key[4 * i + 1], key[4 * i + 2], key[4 * i + 3]);
-		i = i + 1;
-	}
-
-	i = Nk;
-
-	while (i < (Nb * (Nr + 1)))
-	{
-		temp = W[i - 1];
-		if (i % Nk == 0)
-			temp = SubWord(RotWord(temp)) ^ Rcon[i / Nk - 1];
-		else if ((Nk > 6) && (i % Nk == 4))
-			temp = SubWord(temp);
-
-		W[i] = W[i - Nk] ^ temp;
-		i += 1;
-	}
-}
-
-// SubWord
-WORD SubWord(WORD W) // 키 확장을 위한 SubWord함수
-{
-	int i;
-	WORD out = 0, mask = 0xFF000000;
-	BYTE shift = 24;
- 
-	for (i = 0; i<4; i++)
-	{
-		out += (WORD)S_box[HIHEX((W & mask) >> shift)][LOWHEX((W & mask) >> shift)] << shift;
-		mask >>= 8;
-		shift -= 8;
-	}
-	return out;
-}
-
-WORD RotWord(WORD W) // 키 확장을 위한 RotWord함수 쉬프트연산
-{
-	return ((W & 0xFF000000) >> 24) | (W << 8);
-}
- 
-
-void SubBytes(BYTE state[][4]) // 암호화를위한 라운드에 포함된 함수
-{
-	int i, j;
-
-	for (i = 0; i<4; i++)
-		for (j = 0; j<4; j++)
-			state[i][j] = S_box[HIHEX(state[i][j])][LOWHEX(state[i][j])];
-}
- 
-
-void ShiftRows(BYTE state[][4]) // 암호화를위한 라운드에 포함된 함수
-{
-	int i, j;
-	for (i = 1; i<4; i++)
-		for (j = 0; j<i; j++)
-			CirShiftRows(state[i]);
-}
-
-
-void MixColumns(BYTE state[][4]) // 암호화를위한 라운드에 포함된 함수
-{
-	int i, j, k;
-	BYTE a[4][4] = { 0x02, 0x03, 0x01, 0x01,		// a(x) = 03x^3 + 01x^2 + 01x + 02
-		0x01, 0x02, 0x03, 0x01,
-		0x01, 0x01, 0x02, 0x03,
-		0x03, 0x01, 0x01, 0x02 };
-	BYTE b[4][4] = { 0, };
-
-	for (i = 0; i<4; i++)
-	{
-		for (j = 0; j<4; j++)
-			for (k = 0; k<4; k++)
-				b[i][j] ^= x_time_1(a[i][k], state[k][j]);	
-	}
-
-	for (i = 0; i<4; i++)
-		for (j = 0; j<4; j++) state[i][j] = b[i][j];
-}
-
-// AddRoundKey
-void AddRoundKey(BYTE state[][4], WORD* rKey) // 키생성 함수
-{
-	int i, j;
-	WORD mask, shift;
-
-	for (i = 0; i<4; i++)
-	{
-		shift = 24;
-		mask = 0xFF000000;
-
-		for (j = 0; j<4; j++)
-		{
-			state[j][i] = ((rKey[i] & mask) >> shift) ^ state[j][i];
-			mask >>= 8;
-			shift -= 8;
-		}
-	}
-}
-
-// Invers SubBytes
-void Inv_SubBytes(BYTE state[][4]) // 복호화를위한 라운드에 포함된 함수
-{
-	int i, j;
-
-	for (i = 0; i<4; i++)
-		for (j = 0; j<4; j++)
-			state[i][j] = Inv_S_box[HIHEX(state[i][j])][LOWHEX(state[i][j])];
-}
-
-// Invers ShiftRows
-void Inv_ShiftRows(BYTE state[][4]) // 복호화를위한 라운드에 포함된 함수
-{
-	int i, j;
-
-	for (i = 1; i<4; i++)
-		for (j = 0; j<i; j++)
-			Inv_CirShiftRows(state[i]);
-}
-
-// Invers MixColumns
-void Inv_MixColumns(BYTE state[][4]) // 복호화를위한 라운드에 포함된 함수
-{
-	int i, j, k;
-	BYTE a[4][4] = { 0x0E, 0x0B, 0x0D, 0x09,		// a^-1(x) = 0bx^3 + 0dx^2 + 09x + 0e
-		0x09, 0x0E, 0x0B, 0x0D,
-		0x0D, 0x09, 0x0E, 0x0B,
-		0x0B, 0x0D, 0x09, 0x0E };
-	BYTE b[4][4] = { 0, };
-
-	for (i = 0; i<4; i++)
-	{
-		for (j = 0; j<4; j++)
-			for (k = 0; k<4; k++)
-				b[i][j] ^= x_time_1(a[i][k], state[k][j]);
-	}
-
-	for (i = 0; i<4; i++)
-		for (j = 0; j<4; j++) state[i][j] = b[i][j];
-}
-
-void CirShiftRows(BYTE* row)
-{
-	BYTE temp = row[0];
-
-	row[0] = row[1];
-	row[1] = row[2];
-	row[2] = row[3];
-	row[3] = temp;
-}
-
-void Inv_CirShiftRows(BYTE* row)
-{
-	BYTE temp = row[3];
-
-	row[3] = row[2];
-	row[2] = row[1];
-	row[1] = row[0];
-	row[0] = temp;
-}
-
-BYTE x_time(BYTE b, BYTE n)
-{
-	int i;
-	BYTE temp = 0, mask = 0x01;
- 
-	for (i = 0; i<8; i++)
-	{
-		if (n & mask)
-			temp ^= b;
-
-		if (b & 0x80)
-			b = (b << 1) ^ 0x1B;
-
-		else
-			b <<= 1;
-
-		mask <<= 1;
-	}
-	return temp;
-}
-
-BYTE x_time_1(BYTE n, BYTE b)
-// Invers MixColumns
-void Inv_MixColumns(BYTE state[][4]) // 복호화를위한 라운드에 포함된 함수
-{
-	int i, j, k;
-	BYTE a[4][4] = { 0x0E, 0x0B, 0x0D, 0x09,		// a^-1(x) = 0bx^3 + 0dx^2 + 09x + 0e
-		0x09, 0x0E, 0x0B, 0x0D,
-		0x0D, 0x09, 0x0E, 0x0B,
-		0x0B, 0x0D, 0x09, 0x0E };
-	BYTE b[4][4] = { 0, };
-
-	for (i = 0; i<4; i++)
-	{
-		for (j = 0; j<4; j++)
-			for (k = 0; k<4; k++)
-				b[i][j] ^= x_time_1(a[i][k], state[k][j]);
-	}
-
-	for (i = 0; i<4; i++)
-		for (j = 0; j<4; j++) state[i][j] = b[i][j];
-}
-
-void CirShiftRows(BYTE* row)
-{
-	BYTE temp = row[0];
-
-	row[0] = row[1];
-	row[1] = row[2];
-	row[2] = row[3];
-	row[3] = temp;
-}
-
-void Inv_CirShiftRows(BYTE* row)
-{
-	BYTE temp = row[3];
-
-	row[3] = row[2];
-	row[2] = row[1];
-	row[1] = row[0];
-	row[0] = temp;
-}
-
-BYTE x_time(BYTE b, BYTE n)
-{
-	int i;
-	BYTE temp = 0, mask = 0x01;
- 
-	for (i = 0; i<8; i++)
-	{
-		if (n & mask)
-			temp ^= b;
-
-		if (b & 0x80)
-			b = (b << 1) ^ 0x1B;
-
-		else
-			b <<= 1;
-
-		mask <<= 1;
-	}
-	return temp;
-}
-
-BYTE x_time_1(BYTE n, BYTE b)
-{
-	int i;
-	BYTE temp = 0, mask = 0x01;
-
-	for (i = 0; i<8; i++)
-	{
-		if (n & mask)
-			temp ^= b;
-		if (b & 0x80)
-			b = (b << 1) ^ 0x1B;
-		else
-			b <<= 1;
-		
-		mask <<= 1;
-	}
-	return temp;
 }
